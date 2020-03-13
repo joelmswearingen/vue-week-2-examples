@@ -54,13 +54,23 @@
                     <div class="form-check-inline">
                         <!-- TODO v-model, v-bind value -->
                         <input id="v2" class="form-check-input" type="radio" v-bind:value="traditional" v-model="digitalTraditional">
-                        <label class="form-check-label" for="v1">{{ traditional }}</label>
+                        <label class="form-check-label" for="v2">{{ traditional }}</label>
                     </div>
 
                     <div class="form-check-inline">
                         <!-- TODO v-model, v-bind value -->
                         <input id="v1" class="form-check-input" type="radio" v-bind:value="digital" v-model="digitalTraditional">
                         <label class="form-check-label" for="v1">{{ digital }}</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input id="completeStatus" class="form-check-input" type="checkbox">
+                        <label class="form-check-label" for="completeStatus">{{ projectStatus }}</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="notes">{{ recordComments }}</label>
+                        <input id="notes" class="form-control" type="text">
                     </div>
 
                     <div>
@@ -132,6 +142,9 @@
               types: ['sketching','painting','drawing'],
               digital: 'digital',
               traditional: 'traditional',
+              projectStatus: 'Art project complete',
+              completeStatus: false,
+              recordComments: 'Notes (Optional)',
               errors: [],
           },
           computed: {
