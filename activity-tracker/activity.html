@@ -65,11 +65,11 @@
 
                     <div class="form-check">
                         <input id="completeStatus" class="form-check-input" type="checkbox" v-model="projectStatus">
-                        <label class="form-check-label" for="completeStatus">Art Status Complete</label>
+                        <label class="form-check-label" for="completeStatus">Art Project Complete</label>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="notes">Comments</label>
+                        <label class="form-label" for="notes">Notes (Optional):</label>
                         <input id="notes" class="form-control" type="text" v-model='recordComments'>
                     </div>
 
@@ -95,14 +95,18 @@
                             <th>When</th>
                             <th>How long?</th>
                             <th>Type</th>
-                            <th>Digital or traditional?</th>
+                            <th>Method</th>
+                            <th>Notes</th>
+                            <th>Complete?</th>
                         </tr>
                         <!-- TODO display one table row for each activityRecord  -->
                         <tr v-for="record in activityRecords">
                             <td>{{ record.when | shortDateFormat }}</td>
-                            <td>{{ record.howLong }}</td>
+                            <td>{{ record.howLong | decimalPlaces(2) }}</td>
                             <td>{{ record.type }}</td>
                             <td>{{ record.digitalTraditional }}</td>
+                            <td>{{ record.recordComments | noteLengthLimit(40)}}</td>
+                            <td>{{ record.projectStatus }}</td>
                         </tr>
                     </table>
                 </div>
@@ -115,11 +119,11 @@
 
             <div class="card-body">
                 <!-- TODO use computed property to display total hours -->
-                <p>You have practiced a total of {{ totalHours }} hours, broken down as follows:</p>
+                <p>You have practiced art a total of {{ totalHours | decimalPlaces(2) }} hours, broken down as follows:</p>
                 
                 <!-- TODO computed property to display total for each type  -->
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item" v-for="hours, type in totalHoursByType">{{ type }}: {{ hours }}</li>
+                    <li class="list-group-item" v-for="hours, type in totalHoursByType" v-bind:class="'art-'+type">{{ type }}: {{ hours | decimalPlaces(2) }}</li>
                 </ul>
                 
             </div>
@@ -194,6 +198,8 @@
                         howLong: this.howLong,
                         type: this.type,
                         digitalTraditional: this.digitalTraditional,
+                        recordComments: this.recordComments,
+                        projectStatus: this.projectStatus,
                     }
                     this.activityRecords.push(record)
                     this.activityRecords.sort(function (r1, r2) {
@@ -209,6 +215,15 @@
               shortDateFormat(date) {
                   return new Intl.DateTimeFormat().format(date)
               },
+              noteLengthLimit: function(value, limit) {
+                  if (value.length > limit) {
+                      value = value.substring(0, limit)
+                  }
+                  return value
+              },
+              decimalPlaces: function(hours, decimalPlaces) {
+                  return hours.toFixed(decimalPlaces)
+              }
           },
       })
 
