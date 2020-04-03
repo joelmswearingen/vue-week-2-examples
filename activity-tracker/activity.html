@@ -63,11 +63,13 @@
                         <label class="form-check-label" for="v1">{{ digital }}</label>
                     </div>
 
+                    <!-- Added additional form element - checkbox -->
                     <div class="form-check">
                         <input id="completeStatus" class="form-check-input" type="checkbox" v-model="projectStatus">
                         <label class="form-check-label" for="completeStatus">Art Project Complete</label>
                     </div>
 
+                    <!-- Added additional form element - long text box -->
                     <div class="form-group">
                         <label class="form-label" for="notes">Notes (Optional):</label>
                         <input id="notes" class="form-control" type="text" v-model='recordComments'>
@@ -101,11 +103,11 @@
                         </tr>
                         <!-- TODO display one table row for each activityRecord  -->
                         <tr v-for="record in activityRecords">
-                            <td>{{ record.when | shortDateFormat }}</td>
-                            <td>{{ record.howLong | decimalPlaces(2) }}</td>
+                            <td>{{ record.when | shortDateFormat }}</td>  <!-- Added short date filter -->
+                            <td>{{ record.howLong | decimalPlaces(2) }}</td>  <!-- Added decimal place filter -->
                             <td>{{ record.type }}</td>
                             <td>{{ record.digitalTraditional }}</td>
-                            <td>{{ record.recordComments | noteLengthLimit(40)}}</td>
+                            <td>{{ record.recordComments | noteLengthLimit(40)}}</td>  <!-- Added comment lentgh filter for table. Full comment is captured in object -->
                             <td>{{ record.projectStatus }}</td>
                         </tr>
                     </table>
@@ -119,11 +121,11 @@
 
             <div class="card-body">
                 <!-- TODO use computed property to display total hours -->
-                <p>You have practiced art a total of {{ totalHours | decimalPlaces(2) }} hours, broken down as follows:</p>
+                <p>You have practiced art a total of {{ totalHours | decimalPlaces(2) }} hours, broken down as follows:</p>  <!-- Added decimal place filter -->
                 
                 <!-- TODO computed property to display total for each type  -->
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item" v-for="hours, type in totalHoursByType" v-bind:class="'art-'+type">{{ type }}: {{ hours | decimalPlaces(2) }}</li>
+                    <li class="list-group-item" v-for="hours, type in totalHoursByType" v-bind:class="'art-'+type">{{ type }}: {{ hours | decimalPlaces(2) }}</li>  <!-- Added decimal place filter -->
                 </ul>
                 
             </div>
@@ -136,6 +138,7 @@
       // TODO create vue app here 
       let app = new Vue({
           el: "#app",
+          // data elements found in hmtl to handles with vue
           data: {
               activity: 'Practice Art',
               when: '',
@@ -151,16 +154,16 @@
               errors: [],
           },
           computed: {
-              whenLocal() {
+              whenLocal() {  // ensures timestamp collected reflects devices local time settings
                 let date = new Date(this.when)
                 let timestamp = date.getTime() + (date.getTimezoneOffset() * 60 * 1000)
                 let localDate = new Date(timestamp)
                 return localDate
               },
-              activityRecordsCount() {
+              activityRecordsCount() {  // counts the number of records found in activityRecords array
                   return this.activityRecords.length
               },
-              totalHours() {
+              totalHours() {  // keeps accumulation of and adds each records time as it is entered
                   let total = 0
                   if (this.activityRecords.length > 0) {
                       total = this.activityRecords.reduce(function (hoursAccumulator, currentRecord) {
@@ -169,7 +172,7 @@
                   }
                   return total
               },
-              totalHoursByType() {
+              totalHoursByType() {  // splits and displays accumulated hours by activity type
                   let hoursByType = {}
                   this.types.forEach(type => {
                       let totalForType = this.activityRecords
@@ -181,18 +184,20 @@
               }
           },
           methods: {
-              submit() {
-                  this.errors = []
+              submit() {  // validation and submission process
+                  this.errors = []  // array to collect errors, if present
 
+                  // validates date entered is current day or in the past, pushes error to error array if false
                   if (this.whenLocal == 'Invalid Date' || this.whenLocal.getTime() > new Date().getTime()) {
                       this.errors.push('Please select a valid date, today or in the past.')
                   }
 
+                  // validates hours entered is a number and greater than 0, pushes error to error array if false
                   if (typeof (this.howLong) != "number" || this.howLong <= 0) {
                       this.errors.push('The number of hours must be a number greater than zero.')
                   } 
 
-                  if (this.errors.length == 0) {
+                  if (this.errors.length == 0) {  // if not errors present, create object
                     let record = {
                         when: this.whenLocal,
                         howLong: this.howLong,
@@ -201,7 +206,7 @@
                         recordComments: this.recordComments,
                         projectStatus: this.projectStatus,
                     }
-                    this.activityRecords.push(record)
+                    this.activityRecords.push(record)  // push object to activityRecords and sort by time, newest to oldest
                     this.activityRecords.sort(function (r1, r2) {
                         return r2.when.getTime() - r1.when.getTime()
                     })
@@ -209,20 +214,20 @@
             }
           },
           filters: {
-              lowercase(text) {
+              lowercase(text) {  // used to display all text in lowercase
                   return text.toLowerCase()
               },
-              shortDateFormat(date) {
+              shortDateFormat(date) {  // used to disply short date format
                   return new Intl.DateTimeFormat().format(date)
               },
-              noteLengthLimit: function(value, limit) {
+              noteLengthLimit: function(value, limit) {  // used to limit characters in display table
                   if (value.length > limit) {
-                      value = value.substring(0, limit)
-                  }
+                      value = value.substring(0, limit)  // this method allows you to apply a length limit filter to multiple data elements while allowing length to vary by element. 
+                  }  // limit is determined in mustache syntatx
                   return value
               },
-              decimalPlaces: function(hours, decimalPlaces) {
-                  return hours.toFixed(decimalPlaces)
+              decimalPlaces: function(hours, decimalPlaces) {  // used to keep decimals to desired display
+                  return hours.toFixed(decimalPlaces)  // this method allows you to apply desired number of decimals to each individual instances where a decimal is used. 
               }
           },
       })
