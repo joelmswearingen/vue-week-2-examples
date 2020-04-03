@@ -64,7 +64,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input id="completeStatus" class="form-check-input" type="checkbox">
+                        <input id="completeStatus" class="form-check-input" type="checkbox" v-model="projectStatus">
                         <label class="form-check-label" for="completeStatus">{{ projectStatus }}</label>
                     </div>
 
@@ -142,7 +142,7 @@
               types: ['sketching','painting','drawing'],
               digital: 'digital',
               traditional: 'traditional',
-              projectStatus: 'Art project complete',
+              projectStatus: 'Art Project Complete',
               completeStatus: false,
               recordComments: 'Notes (Optional)',
               errors: [],
